@@ -8,9 +8,9 @@
         }
     </style>
     <!-- Plotly.js -->
-	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-	<!-- Numeric JS -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Numeric JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
 </head>
 
 <body style="font-family:sans-serif">
@@ -138,7 +138,7 @@
                 arrayPrestacaoConta.push(fechamento);
             }
 
-		    CreateDivDadosDeputado(indiceAtual);
+            CreateDivDadosDeputado(indiceAtual);
         }
 
         function ParseListaDetalheVerba(nodeLista) {
@@ -234,128 +234,128 @@
         }
 
         function MostrarDadosDeputado(indice) {
-        	if(document.getElementById("carregando" + indice) == null) {
-        		//CriarElemento(tagName, id, classe, idPai, texto, onClick)
+            if(document.getElementById("carregando" + indice) == null) {
+                //CriarElemento(tagName, id, classe, idPai, texto, onClick)
                 CriarElemento("p", "carregando" + indice, null, "deputado" + indice, "Carrregando...", null);
                 document.getElementById("carregando" + indice).setAttribute("style","display:block;background: #f3f3f3;padding: 1% 2%;border-radius: 6px;");
-        	}
-        	else {
-        		document.getElementById("carregando" + indice).setAttribute("style","display:block;background: #f3f3f3;padding: 1% 2%;border-radius: 6px;");
-        	}
+            }
+            else {
+                document.getElementById("carregando" + indice).setAttribute("style","display:block;background: #f3f3f3;padding: 1% 2%;border-radius: 6px;");
+            }
 
-        	indiceAtual = indice;
-            	arrayFechamentos = [];
-        	arrayPrestacaoConta = [];
+            indiceAtual = indice;
+                arrayFechamentos = [];
+            arrayPrestacaoConta = [];
 
             for (var i = 0; i < arrayDeputado.length; i++) {
               if((document.getElementById("dadosDeputado" + i) != null) && (i != indice)) {
-              	document.getElementById("dadosDeputado" + i).setAttribute("style", "display:none;");
-              	document.getElementById("analiseDeputado" + i).setAttribute("style", "display:none;");
+                document.getElementById("dadosDeputado" + i).setAttribute("style", "display:none;");
+                document.getElementById("analiseDeputado" + i).setAttribute("style", "display:none;");
               }  
             }
 
             if(document.getElementById("analiseDeputado" + indice) == null) {
-	            MostrarTodosDadosVerbaIndenizatoriaDeputado(indice);
-	            document.getElementById("dadosDeputado" + indice).setAttribute("style", "display:none;");
-	            Analisar();
-	            CriarDivAnalise(indice);            	
+                MostrarTodosDadosVerbaIndenizatoriaDeputado(indice);
+                document.getElementById("dadosDeputado" + indice).setAttribute("style", "display:none;");
+                Analisar();
+                CriarDivAnalise(indice);                
             }
             else {
-            	document.getElementById("analiseDeputado" + indice).setAttribute("style", "display:block;cursor:pointer;background:#f3f3f3;padding: 1% 2%;border-radius: 6px;");
+                document.getElementById("analiseDeputado" + indice).setAttribute("style", "display:block;background:#f3f3f3;padding: 1% 2%;border-radius: 6px;");
             }
 
             document.getElementById("carregando" + indice).style.display = "none";
         }
 
         function CriarDivAnalise(indice) {
-        	//CriarElemento(tagName, id, classe, idPai, texto, onClick)
-        	CriarElemento("div", "analiseDeputado" + indice, null, "deputado" + indice, null, null);
-    	    CriarElemento("h3", null, null, "analiseDeputado" + indice, "Análise", null);
+            //CriarElemento(tagName, id, classe, idPai, texto, onClick)
+            CriarElemento("div", "analiseDeputado" + indice, null, "deputado" + indice, null, null);
+            CriarElemento("h3", null, null, "analiseDeputado" + indice, "Análise", null);
 
-    	    var x = arrayPrestacaoConta[arrayPrestacaoConta.length - 1].dataReferencia;
-			var y = x.split('-');
+            var x = arrayPrestacaoConta[arrayPrestacaoConta.length - 1].dataReferencia;
+            var y = x.split('-');
 
-    	    CriarElemento("p", null, null, "analiseDeputado" + indice, "Última atualização: " + y[2] + "/" + y[1] + "/" + y[0], null);
+            CriarElemento("p", null, null, "analiseDeputado" + indice, "Última atualização: " + y[2] + "/" + y[1] + "/" + y[0], null);
 
-    	    var valores = [];
-    	    var tipos = [];
+            var valores = [];
+            var tipos = [];
 
-    	    for(var r = 0; r < arrayTiposDespesa.length; r++) {
-    	    	CriarElemento("p", null, null, "analiseDeputado" + indice, "Tipo de despesa: " + arrayTiposDespesa[r].descTipoDespesa, null);
+            for(var r = 0; r < arrayTiposDespesa.length; r++) {
+                CriarElemento("p", null, null, "analiseDeputado" + indice, "Tipo de despesa: " + arrayTiposDespesa[r].descTipoDespesa, null);
 
-    	    	tipos.push(arrayTiposDespesa[r].descTipoDespesa);
+                tipos.push(arrayTiposDespesa[r].descTipoDespesa);
 
-    	    	CriarElemento("p", null, null, "analiseDeputado" + indice, "Valor: R$ " + arrayTiposDespesa[r].valor.toFixed(2).replace('.', ','), null);
+                CriarElemento("p", null, null, "analiseDeputado" + indice, "Valor: R$ " + arrayTiposDespesa[r].valor.toFixed(2).replace('.', ','), null);
 
-    	    	valores.push(arrayTiposDespesa[r].valor);
-    	    }
+                valores.push(arrayTiposDespesa[r].valor);
+            }
 
-    	    CriarElemento("div", "chartDeputado" + indice, null, "analiseDeputado" + indice, null, null);
+            CriarElemento("div", "chartDeputado" + indice, null, "analiseDeputado" + indice, null, null);
 
 
-    	    var data = [{
-			  values: valores,
-			  labels: tipos,
-			  type: 'pie'
-			}];
+            var data = [{
+              values: valores,
+              labels: tipos,
+              type: 'pie'
+            }];
 
-			var layout = {
-			  //height: window.innerHeight,
-			  width: document.getElementById("analiseDeputado" + indice).clientWidth * 0.96
-			};
+            var layout = {
+              //height: window.innerHeight,
+              width: document.getElementById("analiseDeputado" + indice).clientWidth * 0.96
+            };
 
-			Plotly.newPlot("chartDeputado" + indice, data, layout);
+            Plotly.newPlot("chartDeputado" + indice, data, layout);
 
-    	    document.getElementById("analiseDeputado" + indice).setAttribute("style", "display:block;cursor:pointer;background:#f3f3f3;padding: 1% 2%;border-radius: 6px;");
+            document.getElementById("analiseDeputado" + indice).setAttribute("style", "display:block;background:#f3f3f3;padding: 1% 2%;border-radius: 6px;");
         }
 
         function MostrarTodosDadosVerbaIndenizatoriaDeputado(indice) {
-        	if(document.getElementById("dadosDeputado" + indice) == null) {
-	        	CriarElemento("div", "dadosDeputado" + indice, null, "deputado" + indice, null, null);
-    	        CriarElemento("h3", null, null, "dadosDeputado" + indice, "Verba Indenizatória", null);
-        		document.getElementById("dadosDeputado" + indice).setAttribute("style","height: 400px;overflow: auto;");
-        	}
+            if(document.getElementById("dadosDeputado" + indice) == null) {
+                CriarElemento("div", "dadosDeputado" + indice, null, "deputado" + indice, null, null);
+                CriarElemento("h3", null, null, "dadosDeputado" + indice, "Verba Indenizatória", null);
+                document.getElementById("dadosDeputado" + indice).setAttribute("style","height: 400px;overflow: auto;");
+            }
 
-            Navegar("https://dadosabertos.almg.gov.br/ws/prestacao_contas/verbas_indenizatorias/legislatura_atual/deputados/" + arrayDeputado[indice].id + "/datas", 1);            	
+            Navegar("https://dadosabertos.almg.gov.br/ws/prestacao_contas/verbas_indenizatorias/legislatura_atual/deputados/" + arrayDeputado[indice].id + "/datas", 1);                
         }
 
         function Analisar() {
-        	arrayTiposDespesa = [];
+            arrayTiposDespesa = [];
 
-			for(var a = 0; a < arrayPrestacaoConta.length; a++) {
-				if(arrayTiposDespesa.length > 0) {
-					var tem = false;
-					for(var b = 0; b < arrayTiposDespesa.length; b++) {
-						if(arrayTiposDespesa[b].codTipoDespesa == arrayPrestacaoConta[a].codTipoDespesa) { 
-							tem = true;
-						}
-					}
-					if(!tem) { 
-						arrayTiposDespesa.push({ codTipoDespesa: arrayPrestacaoConta[a].codTipoDespesa, descTipoDespesa:arrayPrestacaoConta[a].descTipoDespesa }); 
-					}
-				}
-				else {
-					arrayTiposDespesa.push({ codTipoDespesa: arrayPrestacaoConta[a].codTipoDespesa, descTipoDespesa:arrayPrestacaoConta[a].descTipoDespesa });
-				}
-			}
+            for(var a = 0; a < arrayPrestacaoConta.length; a++) {
+                if(arrayTiposDespesa.length > 0) {
+                    var tem = false;
+                    for(var b = 0; b < arrayTiposDespesa.length; b++) {
+                        if(arrayTiposDespesa[b].codTipoDespesa == arrayPrestacaoConta[a].codTipoDespesa) { 
+                            tem = true;
+                        }
+                    }
+                    if(!tem) { 
+                        arrayTiposDespesa.push({ codTipoDespesa: arrayPrestacaoConta[a].codTipoDespesa, descTipoDespesa:arrayPrestacaoConta[a].descTipoDespesa }); 
+                    }
+                }
+                else {
+                    arrayTiposDespesa.push({ codTipoDespesa: arrayPrestacaoConta[a].codTipoDespesa, descTipoDespesa:arrayPrestacaoConta[a].descTipoDespesa });
+                }
+            }
 
-			
-			for(var s = 0; s < arrayTiposDespesa.length; s++) {
-				arrayTiposDespesa[s].valor = 0;
+            
+            for(var s = 0; s < arrayTiposDespesa.length; s++) {
+                arrayTiposDespesa[s].valor = 0;
 
-				for(var t = 0; t < arrayPrestacaoConta.length; t++) {
-					if(arrayPrestacaoConta[t].codTipoDespesa == arrayTiposDespesa[s].codTipoDespesa) {
-						arrayTiposDespesa[s].valor += Number(arrayPrestacaoConta[t].valor.replace(',','.'));
-					}
-				}				
-			}
+                for(var t = 0; t < arrayPrestacaoConta.length; t++) {
+                    if(arrayPrestacaoConta[t].codTipoDespesa == arrayTiposDespesa[s].codTipoDespesa) {
+                        arrayTiposDespesa[s].valor += Number(arrayPrestacaoConta[t].valor.replace(',','.'));
+                    }
+                }               
+            }
         }
 
         function CriarElemento(tagName, id, classe, idPai, texto, onClick) {
             var elemento = document.createElement(tagName);
             if(id != null) {
-	            elemento.id = id;
-	        }
+                elemento.id = id;
+            }
             elemento.class = classe;
             elemento.textContent = texto;
             if (idPai != null) {
@@ -369,23 +369,23 @@
         }
 
         function Rodar() {
-	        CriarElemento("header", "cabecalho", null, null, null, null);
-	        document.getElementById("cabecalho").setAttribute("style", "color: #c30e0e;");
-	        CriarElemento("h1", "titulo", null, "cabecalho", "Verba Indenizatória", null);
-	        document.getElementById("titulo").setAttribute("style", "text-align:center");
-	        CriarElemento("div", "corpo", null, null, null, null);
-	        document.getElementById("corpo").setAttribute("style", "background: #f3f3f3;padding: 2%;border-radius: 6px;");
-	        CriarElemento("p", "carregando", null, "corpo", "Carregando...", null);
-	        CriarElemento("p", "subtitulo", null, "corpo", "O que é?", null);
-	        document.getElementById("subtitulo").setAttribute("style", "font-weight:bold");
-	        CriarElemento("p", null, null, "corpo", "Todo deputado estadual de Minas Gerais tem direito a receber, além de um salário de R$ 25.322,25 e auxílio-moradia de R$ 4.377,73, até R$ 27 mil mensais de verba indenizatória. Essa verba é usada para pagamento de despesas relativas ao mandato, o que inclui aluguel de veículos e imóveis, despesas de assessoria jurídica e hospedagens.", null);
-	        CriarElemento("p", null, null, "corpo", "Em 4 anos de mandato, cada deputado pode gastar até R$ 1.296.000 com verba indenizatória. São 77 deputados estaduais, o que significa que, a cada 4 anos, a Assembléia Legislativa possui um gasto total de R$ 24.948.000", null);
-	        CriarElemento("p", null, null, "corpo", "Clique no nome do deputado para ver os gastos do mesmo com verba indenizatória:", null);
-	        CriarElemento("div", null, null, "corpo", null, null);
-	        Navegar("https://dadosabertos.almg.gov.br/ws/deputados/em_exercicio", 0);
-    	}
+            CriarElemento("header", "cabecalho", null, null, null, null);
+            document.getElementById("cabecalho").setAttribute("style", "color: #c30e0e;");
+            CriarElemento("h1", "titulo", null, "cabecalho", "Verba Indenizatória", null);
+            document.getElementById("titulo").setAttribute("style", "text-align:center");
+            CriarElemento("div", "corpo", null, null, null, null);
+            document.getElementById("corpo").setAttribute("style", "background: #f3f3f3;padding: 2%;border-radius: 6px;");
+            CriarElemento("p", "carregando", null, "corpo", "Carregando...", null);
+            CriarElemento("p", "subtitulo", null, "corpo", "O que é?", null);
+            document.getElementById("subtitulo").setAttribute("style", "font-weight:bold");
+            CriarElemento("p", null, null, "corpo", "Todo deputado estadual de Minas Gerais tem direito a receber, além de um salário de R$ 25.322,25 e auxílio-moradia de R$ 4.377,73, até R$ 27 mil mensais de verba indenizatória. Essa verba é usada para pagamento de despesas relativas ao mandato, o que inclui aluguel de veículos e imóveis, despesas de assessoria jurídica e hospedagens.", null);
+            CriarElemento("p", null, null, "corpo", "Em 4 anos de mandato, cada deputado pode gastar até R$ 1.296.000 com verba indenizatória. São 77 deputados estaduais, o que significa que, a cada 4 anos, a Assembléia Legislativa possui um gasto total de R$ 24.948.000", null);
+            CriarElemento("p", null, null, "corpo", "Clique no nome do deputado para ver os gastos do mesmo com verba indenizatória:", null);
+            CriarElemento("div", null, null, "corpo", null, null);
+            Navegar("https://dadosabertos.almg.gov.br/ws/deputados/em_exercicio", 0);
+        }
 
-    	Rodar();
+        Rodar();
         
     </script>
 </body>
