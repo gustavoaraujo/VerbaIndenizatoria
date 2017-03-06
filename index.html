@@ -307,6 +307,13 @@
             Plotly.newPlot("chartDeputado" + indice, data, layout);
 
             document.getElementById("analiseDeputado" + indice).setAttribute("style", "display:block;background:#f3f3f3;padding: 1% 2%;border-radius: 6px;");
+
+            var total = 0;
+            for(var i = 0; i < arrayPrestacaoConta.length; i++) {
+                total += Number(arrayPrestacaoConta[i].valor.replace(',','.'));
+            }
+
+            CriarElemento("p", null, null, "analiseDeputado" + indice, "Total de verba indenizatória: R$ " + total, null);
         }
 
         function MostrarTodosDadosVerbaIndenizatoriaDeputado(indice) {
