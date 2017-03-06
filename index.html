@@ -8,9 +8,9 @@
         }
     </style>
     <!-- Plotly.js -->
-	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="httpss://cdn.plot.ly/plotly-latest.min.js"></script>
 	<!-- Numeric JS -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+	<script src="httpss://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
 </head>
 
 <body style="font-family:sans-serif">
@@ -59,7 +59,7 @@
         }
 
         function Navegar(url, tipoParse) {
-            var xhr = new XMLHttpRequest();
+            var xhr = new XMLHttpsRequest();
             xhr.open("GET", url, false);
             xhr.onload = function() {
                 var resultado = xhr.responseText;
@@ -206,7 +206,7 @@
                 var dataReferencia = nodesDeputado[i].getElementsByTagName("dataReferencia")[0].innerHTML;
                 var dataSplit = dataReferencia.split("-");
                 var fechamento = new FechamentoVerba(id, dataSplit[0], dataSplit[1]);
-                Navegar("http://dadosabertos.almg.gov.br/ws/prestacao_contas/verbas_indenizatorias/legislatura_atual/deputados/" + fechamento.idDeputado + "/" + fechamento.ano + "/" + fechamento.mes, 2);
+                Navegar("https://dadosabertos.almg.gov.br/ws/prestacao_contas/verbas_indenizatorias/legislatura_atual/deputados/" + fechamento.idDeputado + "/" + fechamento.ano + "/" + fechamento.mes, 2);
                 arrayFechamentos.push(fechamento);
             }
         }
@@ -316,7 +316,7 @@
         		document.getElementById("dadosDeputado" + indice).setAttribute("style","height: 400px;overflow: auto;");
         	}
 
-            Navegar("http://dadosabertos.almg.gov.br/ws/prestacao_contas/verbas_indenizatorias/legislatura_atual/deputados/" + arrayDeputado[indice].id + "/datas", 1);            	
+            Navegar("https://dadosabertos.almg.gov.br/ws/prestacao_contas/verbas_indenizatorias/legislatura_atual/deputados/" + arrayDeputado[indice].id + "/datas", 1);            	
         }
 
         function Analisar() {
@@ -382,7 +382,7 @@
 	        CriarElemento("p", null, null, "corpo", "Em 4 anos de mandato, cada deputado pode gastar até R$ 1.296.000 com verba indenizatória. São 77 deputados estaduais, o que significa que, a cada 4 anos, a Assembléia Legislativa possui um gasto total de R$ 24.948.000", null);
 	        CriarElemento("p", null, null, "corpo", "Clique no nome do deputado para ver os gastos do mesmo com verba indenizatória:", null);
 	        CriarElemento("div", null, null, "corpo", null, null);
-	        Navegar("http://dadosabertos.almg.gov.br/ws/deputados/em_exercicio", 0);
+	        Navegar("https://dadosabertos.almg.gov.br/ws/deputados/em_exercicio", 0);
     	}
 
     	Rodar();
