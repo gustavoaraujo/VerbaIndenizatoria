@@ -313,7 +313,7 @@
                 total += Number(arrayPrestacaoConta[i].valor.replace(',','.'));
             }
 
-            CriarElemento("p", null, null, "analiseDeputado" + indice, "Total de verba indenizatória: R$ " + total, null);
+            CriarElemento("p", null, null, "analiseDeputado" + indice, "Total de verba indenizatória: R$ " + total.toString().replace('.',','), null);
         }
 
         function MostrarTodosDadosVerbaIndenizatoriaDeputado(indice) {
