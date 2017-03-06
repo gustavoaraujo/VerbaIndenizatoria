@@ -1,0 +1,393 @@
+<html>
+
+<head>
+    <title>Verba Indenizatória</title>
+    <style>
+        .invisivel {
+            display: none;
+        }
+    </style>
+    <!-- Plotly.js -->
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<!-- Numeric JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+</head>
+
+<body style="font-family:sans-serif">
+    <script>
+        var xmlDoc;
+        var arrayDeputado = [];
+        var arrayFechamentos = [];
+        var arrayPrestacaoConta = [];
+        var arrayTiposDespesa = [];
+        var indiceAtual;
+
+        function Deputado(id, partido, tagLocalizacao, nome) {
+            this.id = id;
+            this.nome = nome;
+            this.partido = partido;
+            this.tagLocalizacao = tagLocalizacao;
+        }
+
+        function ResumoVerba(idDeputado, dataReferencia, codTipoDespesa, valor, descTipoDespesa, listaDetalheVerba) {
+            this.idDeputado = idDeputado;
+            this.dataReferencia = dataReferencia;
+            this.codTipoDespesa = codTipoDespesa;
+            this.valor = valor;
+            this.descTipoDespesa = descTipoDespesa;
+            this.listaDetalheVerba = listaDetalheVerba;
+        }
+
+        function DetalheVerba(id, idDeputado, dataReferencia, valorReembolsado, dataEmissao, cpfCnpj, valorDespesa, nomeEmitente, descDocumento, codTipoDespesa, descTipoDespesa) {
+            this.id = id;
+            this.idDeputado = idDeputado;
+            this.dataReferencia = dataReferencia;
+            this.valorReembolsado = valorReembolsado;
+            this.dataEmissao = dataEmissao;
+            this.cpfCnpj = cpfCnpj;
+            this.valorDespesa = valorDespesa;
+            this.nomeEmitente = nomeEmitente;
+            this.descDocumento = descDocumento;
+            this.codTipoDespesa = codTipoDespesa;
+            this.descTipoDespesa = descTipoDespesa;
+        }
+
+        function FechamentoVerba(idDeputado, ano, mes) {
+            this.idDeputado = idDeputado;
+            this.ano = ano;
+            this.mes = mes;
+        }
+
+        function Navegar(url, tipoParse) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url, false);
+            xhr.onload = function() {
+                var resultado = xhr.responseText;
+                ParseResult(resultado, tipoParse);
+            };
+            xhr.send();
+        }
+
+        function ParseResult(resultado, tipoParse) {
+            var parser = new DOMParser();
+            xmlDoc = parser.parseFromString(resultado, "text/xml");
+
+            switch (tipoParse) {
+                case 0:
+                    ParseNodeListaDeputado(xmlDoc);
+                    break;
+                case 1:
+                    ParseNodeFechamentoVerba(xmlDoc);
+                    break;
+                case 2:
+                    ParseNodePrestacaoConta(xmlDoc);
+                    break;
+            }
+        }
+
+        function CreateDivDadosDeputado(i) {
+            //CriarElemento(tagName, id, classe, idPai, texto, onClick)
+
+            var id = arrayDeputado[i].id;
+
+            var prestacoesContaDeputado = GetElementsInArrayById(arrayPrestacaoConta, id);
+
+            for (var a = 0; a < prestacoesContaDeputado.length; a++) {
+                //ResumoVerba(idDeputado, dataReferencia, codTipoDespesa, valor, descTipoDespesa, listaDetalheVerba)
+                CriarElemento("p", null, null, "dadosDeputado" + i, "Data:" + prestacoesContaDeputado[a].dataReferencia, null);
+                CriarElemento("p", null, null, "dadosDeputado" + i, "Tipo de despesa:" + prestacoesContaDeputado[a].descTipoDespesa, null);
+                CriarElemento("p", null, null, "dadosDeputado" + i, "Valor: R$ " + prestacoesContaDeputado[a].valor, null);
+                CriarElemento("p", null, null, "dadosDeputado" + i, "Detalhes:", null);
+
+                //DetalheVerba(id, idDeputado, dataReferencia, valorReembolsado, dataEmissao, cpfCnpj, valorDespesa, nomeEmitente, descDocumento, codTipoDespesa, descTipoDespesa)
+                for (var b = 0; b < prestacoesContaDeputado[a].listaDetalheVerba.length; b++) {
+                    CriarElemento("p", null, null, "dadosDeputado" + i, "Data de referência:" + prestacoesContaDeputado[a].listaDetalheVerba[b].dataReferencia, null);
+                    CriarElemento("p", null, null, "dadosDeputado" + i, "Data de emissão:" + prestacoesContaDeputado[a].listaDetalheVerba[b].dataEmissao, null);
+                    CriarElemento("p", null, null, "dadosDeputado" + i, "Valor reembolsado: R$ " + prestacoesContaDeputado[a].listaDetalheVerba[b].valorReembolsado, null);
+                    CriarElemento("p", null, null, "dadosDeputado" + i, "Valor de despesa: R$ " + prestacoesContaDeputado[a].listaDetalheVerba[b].valorDespesa, null);
+                    CriarElemento("p", null, null, "dadosDeputado" + i, "Nome emitente:" + prestacoesContaDeputado[a].listaDetalheVerba[b].nomeEmitente, null);
+                    CriarElemento("p", null, null, "dadosDeputado" + i, "CPF/CNPJ:" + prestacoesContaDeputado[a].listaDetalheVerba[b].cpfCnpj, null);
+                    CriarElemento("p", null, null, "dadosDeputado" + i, "Tipo de despesa:" + prestacoesContaDeputado[a].listaDetalheVerba[b].descTipoDespesa, null);
+                }
+            }
+        }
+
+        function GetElementsInArrayById(arraySelecao, id) {
+            var arrayResultado = [];
+
+            for (var i = 0; i < arraySelecao.length; i++) {
+                if (arraySelecao[i].idDeputado == id) {
+                    arrayResultado.push(arraySelecao[i]);
+                }
+            }
+
+            return arrayResultado;
+        }
+
+        function ParseNodePrestacaoConta(xmlDoc) {
+            var nodesDeputado = xmlDoc.childNodes[0].getElementsByTagName("resumoVerba");
+
+            for (var i = 0; i < nodesDeputado.length; i++) {
+                var idDeputado = nodesDeputado[i].getElementsByTagName("idDeputado")[0].innerHTML;
+                var dataReferencia = nodesDeputado[i].getElementsByTagName("dataReferencia")[0].innerHTML;
+                var codTipoDespesa = nodesDeputado[i].getElementsByTagName("codTipoDespesa")[0].innerHTML;
+                var valor = nodesDeputado[i].getElementsByTagName("valor")[0].innerHTML;
+                var descTipoDespesa = nodesDeputado[i].getElementsByTagName("descTipoDespesa")[0].innerHTML;
+                var listaDetalheVerba = ParseListaDetalheVerba(nodesDeputado[i].getElementsByTagName("listaDetalheVerba")[0]);
+                var fechamento = new ResumoVerba(idDeputado, dataReferencia, codTipoDespesa, valor, descTipoDespesa, listaDetalheVerba);
+                arrayPrestacaoConta.push(fechamento);
+            }
+
+		    CreateDivDadosDeputado(indiceAtual);
+        }
+
+        function ParseListaDetalheVerba(nodeLista) {
+            var arrayDetalheVerba = [];
+            var lista = nodeLista.getElementsByTagName("detalheVerba");
+            for (var i = 0; i < lista.length; i++) {
+                var id = "";
+                var idDeputado = "";
+                var dataReferencia = "";
+                var valorReembolsado = "";
+                var dataEmissao = "";
+                var cpfCnpj = "";
+                var valorDespesa = "";
+                var nomeEmitente = "";
+                var descDocumento = "";
+                var codTipoDespesa = "";
+                var descTipoDespesa = "";
+                if (lista[i].getElementsByTagName("id").length > 0) {
+                    id = lista[i].getElementsByTagName("id")[0].innerHTML;
+                }
+                if (lista[i].getElementsByTagName("idDeputado").length > 0) {
+                    idDeputado = lista[i].getElementsByTagName("idDeputado")[0].innerHTML;
+                }
+                if (lista[i].getElementsByTagName("dataReferencia").length > 0) {
+                    dataReferencia = lista[i].getElementsByTagName("dataReferencia")[0].innerHTML;
+                }
+                if (lista[i].getElementsByTagName("valorReembolsado").length > 0) {
+                    valorReembolsado = lista[i].getElementsByTagName("valorReembolsado")[0].innerHTML;
+                }
+                if (lista[i].getElementsByTagName("dataEmissao").length > 0) {
+                    dataEmissao = lista[i].getElementsByTagName("dataEmissao")[0].innerHTML;
+                }
+                if (lista[i].getElementsByTagName("cpfCnpj").length > 0) {
+                    cpfCnpj = lista[i].getElementsByTagName("cpfCnpj")[0].innerHTML;
+                }
+                if (lista[i].getElementsByTagName("valorDespesa").length > 0) {
+                    valorDespesa = lista[i].getElementsByTagName("valorDespesa")[0].innerHTML;
+                }
+                if (lista[i].getElementsByTagName("nomeEmitente").length > 0) {
+                    nomeEmitente = lista[i].getElementsByTagName("nomeEmitente")[0].innerHTML;
+                }
+                if (lista[i].getElementsByTagName("descDocumento").length > 0) {
+                    descDocumento = lista[i].getElementsByTagName("descDocumento")[0].innerHTML;
+                }
+                if (lista[i].getElementsByTagName("codTipoDespesa").length > 0) {
+                    codTipoDespesa = lista[i].getElementsByTagName("codTipoDespesa")[0].innerHTML;
+                }
+                if (lista[i].getElementsByTagName("descTipoDespesa").length > 0) {
+                    descTipoDespesa = lista[i].getElementsByTagName("descTipoDespesa")[0].innerHTML;
+                }
+
+                var detalheVerba = new DetalheVerba(id, idDeputado, dataReferencia, valorReembolsado, dataEmissao, cpfCnpj, valorDespesa, nomeEmitente, descDocumento, codTipoDespesa, descTipoDespesa);
+
+                arrayDetalheVerba.push(detalheVerba);
+            }
+
+            return arrayDetalheVerba;
+        }
+
+        function ParseNodeFechamentoVerba(xmlDoc) {
+            var nodesDeputado = xmlDoc.childNodes[0].getElementsByTagName("fechamentoVerba");
+
+            for (var i = 0; i < nodesDeputado.length; i++) {
+                var id = nodesDeputado[i].getElementsByTagName("idDeputado")[0].innerHTML;
+                var dataReferencia = nodesDeputado[i].getElementsByTagName("dataReferencia")[0].innerHTML;
+                var dataSplit = dataReferencia.split("-");
+                var fechamento = new FechamentoVerba(id, dataSplit[0], dataSplit[1]);
+                Navegar("http://dadosabertos.almg.gov.br/ws/prestacao_contas/verbas_indenizatorias/legislatura_atual/deputados/" + fechamento.idDeputado + "/" + fechamento.ano + "/" + fechamento.mes, 2);
+                arrayFechamentos.push(fechamento);
+            }
+        }
+
+        function ParseNodeListaDeputado(xmlDoc) {
+            var nodesDeputado = xmlDoc.childNodes[0].getElementsByTagName("deputado");
+
+            for (var i = 0; i < nodesDeputado.length; i++) {
+                var id = nodesDeputado[i].getElementsByTagName("id")[0].innerHTML;
+                var partido = nodesDeputado[i].getElementsByTagName("partido")[0].innerHTML;
+                var tagLocalizacao = nodesDeputado[i].getElementsByTagName("tagLocalizacao")[0].innerHTML;
+                var nome = nodesDeputado[i].getElementsByTagName("nome")[0].innerHTML;
+                var deputado = new Deputado(id, partido, tagLocalizacao, nome);
+                arrayDeputado.push(deputado);
+            }
+
+            for (var i = 0; i < arrayDeputado.length; i++) {
+                CriarElemento("div", "deputado" + i, null, null, null, null);
+                CriarElemento("p", "tituloDeputado" + i, null, "deputado" + i, arrayDeputado[i].nome + " - " + arrayDeputado[i].partido, "MostrarDadosDeputado(" + i + ")");
+
+                document.getElementById("tituloDeputado" + i).setAttribute("style", "cursor:pointer;background: #f3f3f3;padding: 1% 2%;border-radius: 6px;font-weight: bold;");
+            }
+
+            document.getElementById("carregando").setAttribute("style", "display:none;");
+        }
+
+        function MostrarDadosDeputado(indice) {
+        	if(document.getElementById("carregando" + indice) == null) {
+        		//CriarElemento(tagName, id, classe, idPai, texto, onClick)
+                CriarElemento("p", "carregando" + indice, null, "deputado" + indice, "Carrregando...", null);
+                document.getElementById("carregando" + indice).setAttribute("style","display:block;background: #f3f3f3;padding: 1% 2%;border-radius: 6px;");
+        	}
+        	else {
+        		document.getElementById("carregando" + indice).setAttribute("style","display:block;background: #f3f3f3;padding: 1% 2%;border-radius: 6px;");
+        	}
+
+        	indiceAtual = indice;
+            arrayFechamentos = [];
+        	arrayPrestacaoConta = [];
+
+            for (var i = 0; i < arrayDeputado.length; i++) {
+              if((document.getElementById("dadosDeputado" + i) != null) && (i != indice)) {
+              	document.getElementById("dadosDeputado" + i).setAttribute("style", "display:none;");
+              	document.getElementById("analiseDeputado" + i).setAttribute("style", "display:none;");
+              }  
+            }
+
+            if(document.getElementById("analiseDeputado" + indice) == null) {
+	            MostrarTodosDadosVerbaIndenizatoriaDeputado(indice);
+	            document.getElementById("dadosDeputado" + indice).setAttribute("style", "display:none;");
+	            Analisar();
+	            CriarDivAnalise(indice);            	
+            }
+            else {
+            	document.getElementById("analiseDeputado" + indice).setAttribute("style", "display:block;cursor:pointer;background:#f3f3f3;padding: 1% 2%;border-radius: 6px;");
+            }
+
+            document.getElementById("carregando" + indice).style.display = "none";
+        }
+
+        function CriarDivAnalise(indice) {
+        	//CriarElemento(tagName, id, classe, idPai, texto, onClick)
+        	CriarElemento("div", "analiseDeputado" + indice, null, "deputado" + indice, null, null);
+    	    CriarElemento("h3", null, null, "analiseDeputado" + indice, "Análise", null);
+
+    	    var x = arrayPrestacaoConta[arrayPrestacaoConta.length - 1].dataReferencia;
+			var y = x.split('-');
+
+    	    CriarElemento("p", null, null, "analiseDeputado" + indice, "Última atualização: " + y[2] + "/" + y[1] + "/" + y[0], null);
+
+    	    var valores = [];
+    	    var tipos = [];
+
+    	    for(var r = 0; r < arrayTiposDespesa.length; r++) {
+    	    	CriarElemento("p", null, null, "analiseDeputado" + indice, "Tipo de despesa: " + arrayTiposDespesa[r].descTipoDespesa, null);
+
+    	    	tipos.push(arrayTiposDespesa[r].descTipoDespesa);
+
+    	    	CriarElemento("p", null, null, "analiseDeputado" + indice, "Valor: R$ " + arrayTiposDespesa[r].valor.toFixed(2).replace('.', ','), null);
+
+    	    	valores.push(arrayTiposDespesa[r].valor);
+    	    }
+
+    	    CriarElemento("div", "chartDeputado" + indice, null, "analiseDeputado" + indice, null, null);
+
+
+    	    var data = [{
+			  values: valores,
+			  labels: tipos,
+			  type: 'pie'
+			}];
+
+			var layout = {
+			  //height: window.innerHeight,
+			  width: document.getElementById("analiseDeputado" + indice).clientWidth * 0.96
+			};
+
+			Plotly.newPlot("chartDeputado" + indice, data, layout);
+
+    	    document.getElementById("analiseDeputado" + indice).setAttribute("style", "display:block;cursor:pointer;background:#f3f3f3;padding: 1% 2%;border-radius: 6px;");
+        }
+
+        function MostrarTodosDadosVerbaIndenizatoriaDeputado(indice) {
+        	if(document.getElementById("dadosDeputado" + indice) == null) {
+	        	CriarElemento("div", "dadosDeputado" + indice, null, "deputado" + indice, null, null);
+    	        CriarElemento("h3", null, null, "dadosDeputado" + indice, "Verba Indenizatória", null);
+        		document.getElementById("dadosDeputado" + indice).setAttribute("style","height: 400px;overflow: auto;");
+        	}
+
+            Navegar("http://dadosabertos.almg.gov.br/ws/prestacao_contas/verbas_indenizatorias/legislatura_atual/deputados/" + arrayDeputado[indice].id + "/datas", 1);            	
+        }
+
+        function Analisar() {
+        	arrayTiposDespesa = [];
+
+			for(var a = 0; a < arrayPrestacaoConta.length; a++) {
+				if(arrayTiposDespesa.length > 0) {
+					var tem = false;
+					for(var b = 0; b < arrayTiposDespesa.length; b++) {
+						if(arrayTiposDespesa[b].codTipoDespesa == arrayPrestacaoConta[a].codTipoDespesa) { 
+							tem = true;
+						}
+					}
+					if(!tem) { 
+						arrayTiposDespesa.push({ codTipoDespesa: arrayPrestacaoConta[a].codTipoDespesa, descTipoDespesa:arrayPrestacaoConta[a].descTipoDespesa }); 
+					}
+				}
+				else {
+					arrayTiposDespesa.push({ codTipoDespesa: arrayPrestacaoConta[a].codTipoDespesa, descTipoDespesa:arrayPrestacaoConta[a].descTipoDespesa });
+				}
+			}
+
+			
+			for(var s = 0; s < arrayTiposDespesa.length; s++) {
+				arrayTiposDespesa[s].valor = 0;
+
+				for(var t = 0; t < arrayPrestacaoConta.length; t++) {
+					if(arrayPrestacaoConta[t].codTipoDespesa == arrayTiposDespesa[s].codTipoDespesa) {
+						arrayTiposDespesa[s].valor += Number(arrayPrestacaoConta[t].valor.replace(',','.'));
+					}
+				}				
+			}
+        }
+
+        function CriarElemento(tagName, id, classe, idPai, texto, onClick) {
+            var elemento = document.createElement(tagName);
+            if(id != null) {
+	            elemento.id = id;
+	        }
+            elemento.class = classe;
+            elemento.textContent = texto;
+            if (idPai != null) {
+                document.getElementById(idPai).appendChild(elemento);
+            } else {
+                document.body.appendChild(elemento);
+            }
+
+            if (onClick != null)
+                elemento.setAttribute("onClick", onClick);
+        }
+
+        function Rodar() {
+	        CriarElemento("header", "cabecalho", null, null, null, null);
+	        document.getElementById("cabecalho").setAttribute("style", "color: #c30e0e;");
+	        CriarElemento("h1", "titulo", null, "cabecalho", "Verba Indenizatória", null);
+	        document.getElementById("titulo").setAttribute("style", "text-align:center");
+	        CriarElemento("div", "corpo", null, null, null, null);
+	        document.getElementById("corpo").setAttribute("style", "background: #f3f3f3;padding: 2%;border-radius: 6px;");
+	        CriarElemento("p", "carregando", null, "corpo", "Carregando...", null);
+	        CriarElemento("p", "subtitulo", null, "corpo", "O que é?", null);
+	        document.getElementById("subtitulo").setAttribute("style", "font-weight:bold");
+	        CriarElemento("p", null, null, "corpo", "Todo deputado estadual de Minas Gerais tem direito a receber, além de um salário de R$ 25.322,25 e auxílio-moradia de R$ 4.377,73, até R$ 27 mil mensais de verba indenizatória. Essa verba é usada para pagamento de despesas relativas ao mandato, o que inclui aluguel de veículos e imóveis, despesas de assessoria jurídica e hospedagens.", null);
+	        CriarElemento("p", null, null, "corpo", "Em 4 anos de mandato, cada deputado pode gastar até R$ 1.296.000 com verba indenizatória. São 77 deputados estaduais, o que significa que, a cada 4 anos, a Assembléia Legislativa possui um gasto total de R$ 24.948.000", null);
+	        CriarElemento("p", null, null, "corpo", "Clique no nome do deputado para ver os gastos do mesmo com verba indenizatória:", null);
+	        CriarElemento("div", null, null, "corpo", null, null);
+	        Navegar("http://dadosabertos.almg.gov.br/ws/deputados/em_exercicio", 0);
+    	}
+
+    	Rodar();
+        
+    </script>
+</body>
+
+</html>
